@@ -1,17 +1,16 @@
-#!/bin/sh
-#Compare the rpm database between two systems
+#!/bin/bash
+#Compare the rpm database between two hosts
 
 if [ $# -ne 2 ]; then
-    echo "No servers specified"
+    echo "No hosts specified. usage: rpmcmp host1 host2"
     exit 1
 fi
 
-#Get remote server rpm database
+#Get first remote host rpm database
 ssh -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $1 "rpm -qa" > /tmp/rpm_db1.$$
 
-#Get local rpm database
+#Get second remote host rpm database
 ssh -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $2 "rpm -qa" > /tmp/rpm_db2.$$
-#rpm -qa > /tmp/local_server_rpm_db.$$
 
 #Compare and display output
 sdiff -s <(sort /tmp/rpm_db1.$$) <(sort /tmp/rpm_db2.$$)
